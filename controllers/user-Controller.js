@@ -15,7 +15,8 @@ try{
         role,
         image
 });
-
+    const foundEmail=await  User.findOne({email});
+    if(foundEmail) return next(new ErrorHandler("Email already exists",400));
     const created = await newUser.save();
     if(created) return res.status(201).json({statue:"success",data:newUser});
     else return next(new ErrorHandler("there is a problem while creating new user",400));
