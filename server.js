@@ -14,7 +14,7 @@ dotenv.config();
 const cors = require('cors');
 const allowedOrigins = [
     'http://localhost:3000',
-    'https://event-verse-xi.vercel.app/',
+    'https://event-verse-xi.vercel.app',
     
 ];
 
