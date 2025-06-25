@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Roles = require('../utils/roles')
 const {
     getAllInvitationsForEvent,
     getSingleInvitation,
@@ -10,11 +11,11 @@ const {
 const { isAuthorized, authorizeRoles } = require('../middlewares/auth/AuthorizationMeiddleware');
 
 router.route('/:eventId')
-    .get(isAuthorized,getAllInvitationsForEvent)
-    .post(isAuthorized, authorizeRoles, addInvitation);
+    .get(isAuthorized,authorizeRoles(Roles.Organizer),getAllInvitationsForEvent)
+    .post(isAuthorized, authorizeRoles(Roles.Organizer), addInvitation);
 router.route('/:eventId/:id')
-    .get(isAuthorized, getSingleInvitation)
-    .put(isAuthorized, authorizeRoles, updateInvitation)
-    .delete(isAuthorized, authorizeRoles, deleteInvitation);
+    .get(isAuthorized,authorizeRoles(Roles.Organizer) ,getSingleInvitation)
+    .put(isAuthorized,authorizeRoles(Roles.Organizer) , updateInvitation)
+    .delete(isAuthorized, authorizeRoles(Roles.Organizer), deleteInvitation);
     
     module.exports = router;

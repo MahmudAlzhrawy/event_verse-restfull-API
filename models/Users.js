@@ -16,7 +16,7 @@ const userSchema =new Schema({
     },
     role:{
         type:String,
-        enum:['organizer','gust'],
+        enum:['Organizer','Gust','Admin'],
         required:true,
     },
     image:{
@@ -25,6 +25,5 @@ const userSchema =new Schema({
     
 
 },{timestamps:true})
-
 const User =models.User || model('User',userSchema);
 module.exports=User;

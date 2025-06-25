@@ -26,16 +26,18 @@ const isAuthorized = async (req, res, next) => {
     }
 };
 
-const authorizeRoles = (req, res, next) => {
-    if (!req.user) {
-        return next(new ErrorHandler('User not authenticated', 401));
-    }
+const authorizeRoles = (...roles)=>{
+        return (req, res, next) => {
+            if (!req.user) {
+                return next(new ErrorHandler('User not authenticated', 401));
+            }
 
-    if (req.user.role !== 'organizer') {
-        return next(new ErrorHandler('Forbidden: You do not have permission to access this resource', 403));
-    }
+            if (!roles.includes(req.user.role)) {
+                return next(new ErrorHandler('Forbidden: You do not have permission to access this resource', 403));
+            }
 
-    next();
+            next();
+        }
 };
 
 module.exports = {

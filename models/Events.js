@@ -5,6 +5,11 @@ const EventSchema = new Schema({
         type:String,
         required:true,
     },
+    privacy:{
+        type:String,
+        required:true,
+        enum:['Private','Public']
+    },
     description:{
         type:String,
         required:true,

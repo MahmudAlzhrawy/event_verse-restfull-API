@@ -1,10 +1,39 @@
 const Event = require('../models/Events');
 
 const ErrorHandler = require('../utils/ErrorHandler');
+
+const GetEvents = async (req, res, next) => {
+    try {
+    if(req.user.role =="Gust"){
+        const events = await Event.find({privacy:"Public"}).populate('createdBy','-_id name').select("-__v ");
+        if (events) {
+        return res.status(200).json({
+            data: events,
+            message: "events fetched successfully",
+        });
+        }
+        return next(new ErrorHandler("There is a problem while fetching events", 400));
+    }
+    else if(req.user.role =="Admin"){
+        const events = await Event.find().populate('createdBy','name').select("-__v ");
+        if (events) {
+        return res.status(200).json({
+            data: events,
+            message: "events fetched successfully",
+        });
+        }
+        return next(new ErrorHandler("There is a problem while fetching events", 400));
+    }
+    
+    } catch (error) {
+        return next(error);
+    }
+};
 const AddEvent = async(req,res,next)=>{
 try{
-    const {title,description,date,location}= req.body;
+    const {title,description,date,location,privacy}= req.body;
     const newEvent =new Event({
+        privacy,
         title,
         description,
         date,
@@ -22,7 +51,8 @@ try{
 }catch(error){
     next(new ErrorHandler(error,500))}
 }
-const GetEvents = async (req, res, next) => {
+
+const GetEventsBelongeToOrganizer = async (req, res, next) => {
     try {
         const events = await Event.find({createdBy:req.user.id}).populate('createdBy','-_id name').select("-__v ");
         if (events) {
@@ -48,9 +78,9 @@ const GetSingleEvent=async(req,res,next)=>{
 }
 const UpdateEvent=async(req,res,next)=>{
     const{id} =req.params;
-    const {title,description,date,location} =req.body;
+    const {title,description,date,location,privacy} =req.body;
     try{
-        const updateEvent = await Event.findByIdAndUpdate({_id:id},{title,description,date,location});
+        const updateEvent = await Event.findByIdAndUpdate({_id:id},{title,description,date,location,privacy});
         if(updateEvent) return res.status(200).json({updatedEvent:updateEvent,message:"updated Successfully"})
             return next(new ErrorHandler(`Failed to update the Event with ID :${id} `,400));
     }catch(err){
@@ -67,6 +97,7 @@ return next(new ErrorHandler(`failed to delete Event with id ${id}`,400));
 module.exports={
     AddEvent,
     UpdateEvent,
+    GetEventsBelongeToOrganizer,
     GetEvents,
     GetSingleEvent,
     DeleteEvent
