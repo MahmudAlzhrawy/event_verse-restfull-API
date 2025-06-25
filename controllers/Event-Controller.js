@@ -24,7 +24,6 @@ const GetEvents = async (req, res, next) => {
         }
         return next(new ErrorHandler("There is a problem while fetching events", 400));
     }
-    
     } catch (error) {
         return next(error);
     }
